@@ -147,4 +147,23 @@ public class UtilisateurDao
 
 		return false;
 	}
+	public static boolean login(String login, String pass) {
+		int isReg = 0;
+		Connection  conn = DbConnection.openConnexion();
+		if( conn != null) {
+			String req = "SELECT * FROM user WHERE login = '"+login+"' AND password ='"+pass+"'";
+			try {
+				Statement ps = conn.createStatement();
+				
+				ResultSet res = ps.executeQuery(req);
+				while(res.next()) {
+					isReg++;
+				}
+				
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	   return isReg == 1 ? true : false;
+	}
 }

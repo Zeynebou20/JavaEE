@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import beans.Utilisateur;
 import dao.UtilisateurDao;
+import forms.Adduserfrom;
 
 /**
  * Servlet implementation class Add
@@ -33,28 +34,28 @@ public class Add extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		if(session.getAttribute("session") != null){
+
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(VUE_AJOUTER_UTILISATEUR);
 		dispatcher.forward(request, response);
-		} else {
-			response.sendRedirect("auth");
-		}
+
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String nom = request.getParameter("nom");
-		String prenom = request.getParameter("prenom");
-		String login = request.getParameter("login");
-		String password = request.getParameter("password");
-		if( login != null ) {
-		Utilisateur u = new Utilisateur(nom,prenom,login,password);
-		 UtilisateurDao.add(u);
+		Adduserfrom form = new Adduserfrom(request);
+		if(form.ajouter()) {
+			response.sendRedirect("list");
+		} else {
+			request.setAttribute("utilisateur", form.getUtilisateur());
+			request.setAttribute("errors", form.getErrors());
+			request.setAttribute("status", form.isStatus());
+			request.setAttribute("statusMessage", form.getStatusMessage());
+			getServletContext().getRequestDispatcher(VUE_AJOUTER_UTILISATEUR).forward(request, response);
 		}
-		response.sendRedirect("list");
+		
+		
 	}
 
 }
